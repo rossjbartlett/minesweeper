@@ -35,7 +35,7 @@ function createGrid ({ size, numBombs }) {
   return grid
 }
 
-function Header ({ currentDifficulty, setDifficulty }) {
+function Header ({ currentDifficulty, setDifficulty, reset, time }) {
   const onChange = e => setDifficulty(DIFFICULTIES[e.target.value])
   return (
     <div id='header'>
@@ -44,16 +44,14 @@ function Header ({ currentDifficulty, setDifficulty }) {
           <option value={d} key={d}>{DIFFICULTIES[d].name}</option>
         ))}
       </select>
-      {/* TODO show clock here */}
+      <div id='time'><span id='timeIcon'>⏱</span>{time}</div>
+      <div id='resetBtn' onClick={reset}>↺</div>
     </div>
-    // TODO reset board on difficulty change - flags are staying up
   )
 }
 
-function Square ({ colorClass, numAdjBombs, square, uncover }) {
-  const { isBomb, isUncovered } = square
-  const [isFlagged, setFlagged] = useState(false)
-  const [showBomb, setShowBomb] = useState(false)
+function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lose, showBombs }) {
+  const { isBomb, isUncovered, isFlagged } = square
   const contextMenu = (e) => {
     e.preventDefault()
     if (!isUncovered) setFlagged(!isFlagged)
@@ -61,15 +59,14 @@ function Square ({ colorClass, numAdjBombs, square, uncover }) {
   const handleClick = (e) => {
     if (isFlagged) return
     if (isBomb) {
-      console.log('YOU LOSE') // TODO callback lose()
-      setShowBomb(true)
+      lose()
     } else uncover()
   }
   let content = ''
-  if (showBomb) content = '💣'
+  if (showBombs && isBomb) content = '💣' // game ended
   else if (isFlagged) content = '🚩'
   else if (isUncovered) {
-    if (isBomb) content = 'b'
+    if (isBomb) content = '💣'
     else content = numAdjBombs > 0 ? numAdjBombs : ''
   }
   const style = { color: TEXT_COLORS[numAdjBombs] }
@@ -86,8 +83,12 @@ function Square ({ colorClass, numAdjBombs, square, uncover }) {
   )
 }
 
-function Grid ({ grid, updateGrid }) {
-  const style = { gridTemplateColumns: `repeat(${grid[0].length}, 1fr)` }
+function Grid ({ grid, updateGrid, lost, setLost }) {
+  const style = {
+    gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
+    pointerEvents: lost ? 'none' : ''
+  }
+
   const colors = ['c0', 'c1']
 
   function numAdjBombs (i, j) {
@@ -96,6 +97,7 @@ function Grid ({ grid, updateGrid }) {
   }
 
   function uncoverRecurse (i, j) {
+    if (grid[i][j].isFlagged) return
     if (grid[i][j].isUncovered) return
     grid[i][j].isUncovered = true
     if (grid[i][j].isBomb || numAdjBombs(i, j) > 0) return
@@ -108,6 +110,15 @@ function Grid ({ grid, updateGrid }) {
     uncoverRecurse(i, j)
     updateGrid(grid)
     checkWin(grid)
+  }
+
+  function setFlagged (i, j, value) {
+    grid[i][j].isFlagged = value
+    updateGrid(grid)
+  }
+
+  function lose () {
+    setLost(true)
   }
 
   function checkWin (grid) {
@@ -128,6 +139,9 @@ function Grid ({ grid, updateGrid }) {
             colorClass={colors[(i + j) % 2]}
             numAdjBombs={numAdjBombs(i, j)}
             uncover={() => uncoverClick(i, j)}
+            setFlagged={value => setFlagged(i, j, value)}
+            lose={() => lose()}
+            showBombs={lost}
           />
         ))
       ))}
@@ -138,22 +152,48 @@ function Grid ({ grid, updateGrid }) {
 function App () {
   const [difficulty, setDifficulty] = useState(DIFFICULTIES.easy)
   const [grid, updateGrid] = useState([[]])
+  const [lost, setLost] = useState(false)
 
-  useEffect(() => { // executes on mount and when size changes
-    updateGrid(createGrid(difficulty))
-  }, [difficulty])
+  const [time, setTime] = useState(0)
+
+  useEffect(reset, [difficulty])// executes on mount and when size changes
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(time => time + 1)
+    }, 1000)
+    return () => clearInterval(interval) // clearInterval on unmount
+  }, [])
+  // TODO pause time when reset, only start counting after first click
+
+  function reset () {
+    if (!grid[0].length || grid.flat().every(x => !x.isUncovered) || window.confirm('Are you sure you want to reset the game?')) {
+      updateGrid(createGrid(difficulty))
+      setLost(false)
+      setTime(0)
+    }
+  }
+
+  // Clear intervals after 6 sec with the timer id
+  // setTimeout(() => { clearInterval(timerId); alert('Bye') }, 6000)
 
   return (
     <div id='app'>
-      <Header
-        currentDifficulty={difficulty}
-        setDifficulty={setDifficulty}
-      />
-      <Grid
+      <div id='game'>
+        <Header
+          currentDifficulty={difficulty}
+          setDifficulty={setDifficulty}
+          reset={reset}
+          time={time}
+        />
+        <Grid
         // pass a copy of the grid to avoid unwanted state changes
-        grid={JSON.parse(JSON.stringify(grid))}
-        updateGrid={updateGrid}
-      />
+          grid={JSON.parse(JSON.stringify(grid))}
+          updateGrid={updateGrid}
+          lost={lost}
+          setLost={setLost}
+        />
+      </div>
     </div>
   )
 }

@@ -14,17 +14,37 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#game {
+  box-shadow: 0 0 50px black;
 }
 
 #header {
-  width: 80%;
+  background: saddlebrown;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
+  padding: 20px;
+  box-shadow: 0 0 5px black;
+  position: relative;
+}
+
+select {
+  border-radius: 5px;
+  box-shadow: 0 0 2px lightgrey;
+  cursor: pointer;
+}
+
+#time {
+}
+
+#timeIcon {
+  margin-right: 5px;
 }
 
 #grid {
   display: grid;
-  padding: 10px;
   cursor: pointer;
 }
 
@@ -48,4 +68,8 @@
 }
 .square.c1.uncovered {
   background-color: var(--light-brown);
+}
+
+#resetBtn {
+  cursor: pointer;
 }
