@@ -199,3 +199,15 @@ function App () {
 }
 
 export default App
+
+/** TODO
+ * on devices in landscape mode, your game should be centered in the browser window, with width of at most 800px
+ * on devices in portrait mode, your game should occupy full width of the screen
+* change size of each square
+
+// TODO make long-tap cause right click on desktop as well
+// TODO guarantee first click not bomb
+// only add bombs to the grid after the first uncover?
+// TODO show a count of numBombs - numIsFlagged
+// stop timer when game done, turn red?
+ */
