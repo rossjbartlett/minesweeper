@@ -205,6 +205,7 @@ export default App
  * on devices in portrait mode, your game should occupy full width of the screen
 * change size of each square
 
+ if game is done, dont confirm reset
 // TODO make long-tap cause right click on desktop as well
 // TODO guarantee first click not bomb
 // only add bombs to the grid after the first uncover?
