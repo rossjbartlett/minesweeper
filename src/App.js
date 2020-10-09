@@ -83,7 +83,7 @@ function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lost })
   )
 }
 
-function Grid ({ grid, updateGrid, lost, won }) {
+function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWon, setLost }) {
   const style = {
     gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
     pointerEvents: lost || won ? 'none' : ''
@@ -107,8 +107,14 @@ function Grid ({ grid, updateGrid, lost, won }) {
   }
 
   function uncoverClick (i, j) {
+    if (grid[i][j].isBomb) {
+      setLost(true)
+      return
+    }
     uncoverRecurse(i, j)
     updateGrid(grid)
+    if (!gameStarted) setGameStarted(true)
+    if (grid.flat().filter(x => !x.isBomb).every(x => x.isUncovered)) setWon(true)
   }
 
   function setFlagged (i, j, value) {
@@ -139,20 +145,34 @@ function App () {
   const [difficulty, setDifficulty] = useState(DIFFICULTIES.easy)
   const [grid, updateGrid] = useState([[]])
   const [time, setTime] = useState(0)
+  const [gameStarted, setGameStarted] = useState(false)
+  const [lost, setLost] = useState(false)
+  const [won, setWon] = useState(false)
+  const [timerId, setTimerId] = useState()
 
-  useEffect(reset, [difficulty]) // executes on mount and when size changes
+  useEffect(reset, [difficulty])
 
   useEffect(() => {
-    setInterval(() => {
-      setTime(time => time + 1)
-    }, 1000)
-  }, [])
+    if (gameStarted) {
+      setTimerId(setInterval(() => {
+        setTime(time => time + 1)
+      }, 1000))
+    }
+  }, [gameStarted])
+
+  useEffect(() => {
+    if (lost || won) clearInterval(timerId)
+  }, [lost, won])
 
   function reset () {
     // if the game is over or hasn't started, don't ask for confirmation before resetting
     if (!grid[0].length || lost || won || grid.flat().every(x => !x.isUncovered) || window.confirm('Are you sure you want to reset the game?')) {
       updateGrid(createGrid(difficulty))
       setTime(0)
+      clearInterval(timerId)
+      setGameStarted(false)
+      setLost(false)
+      setWon(false)
     }
   }
 
@@ -160,8 +180,6 @@ function App () {
   // setTimeout(() => { clearInterval(timerId); alert('Bye') }, 6000)
 
   const numFlags = grid.flat().filter(x => x.isFlagged).length
-  const won = grid.flat().filter(x => !x.isBomb).every(x => x.isUncovered)
-  const lost = grid.flat().filter(x => x.isBomb).some(x => x.isUncovered)
 
   return (
     <div id='app'>
@@ -181,6 +199,10 @@ function App () {
           updateGrid={updateGrid}
           lost={lost}
           won={won}
+          gameStarted={gameStarted}
+          setGameStarted={setGameStarted}
+          setLost={setLost}
+          setWon={setWon}
         />
       </div>
     </div>
@@ -192,11 +214,6 @@ export default App
 /** TODO
  * guarantee first click not bomb - only add bombs to the grid after the first uncover?
  * make long-tap cause right click on desktop as well
- */
-
-/** TODO timer
- * start timer after first click
- * stop timer when game done (lost or win)
  */
 
 /** TODO size
