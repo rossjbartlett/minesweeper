@@ -43,6 +43,7 @@ select {
   box-shadow: 0 0 2px lightgrey;
   cursor: pointer;
   font-weight: 600;
+  text-align-last: center;
 }
 
 #time {
