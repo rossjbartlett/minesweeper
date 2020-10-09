@@ -143,10 +143,9 @@ function App () {
   useEffect(reset, [difficulty]) // executes on mount and when size changes
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    setInterval(() => {
       setTime(time => time + 1)
     }, 1000)
-    return () => clearInterval(interval) // clearInterval on unmount
   }, [])
 
   function reset () {
