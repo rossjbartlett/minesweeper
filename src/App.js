@@ -35,8 +35,9 @@ function createGrid ({ size, numBombs }) {
   return grid
 }
 
-function Header ({ currentDifficulty, setDifficulty, reset, time }) {
+function Header ({ currentDifficulty, setDifficulty, reset, time, lost, won, numFlags }) {
   const onChange = e => setDifficulty(DIFFICULTIES[e.target.value])
+  const timeStyle = { color: lost ? 'red' : won ? 'green' : 'inherit' }
   return (
     <div id='header'>
       <select id="difficulty" name="difficulty" onChange={onChange}>
@@ -44,13 +45,14 @@ function Header ({ currentDifficulty, setDifficulty, reset, time }) {
           <option value={d} key={d}>{DIFFICULTIES[d].name}</option>
         ))}
       </select>
-      <div id='time'><span id='timeIcon'>⏱</span>{time}</div>
+      <div id='numFlags'><span id='numFlagsIcon'>🚩</span>{currentDifficulty.numBombs - numFlags}</div>
+      <div id='time' style={timeStyle}><span id='timeIcon'>⏱</span>{time}</div>
       <div id='resetBtn' onClick={reset}>↺</div>
     </div>
   )
 }
 
-function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lose, showBombs }) {
+function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lost }) {
   const { isBomb, isUncovered, isFlagged } = square
   const contextMenu = (e) => {
     e.preventDefault()
@@ -58,12 +60,10 @@ function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lose, s
   }
   const handleClick = (e) => {
     if (isFlagged) return
-    if (isBomb) {
-      lose()
-    } else uncover()
+    uncover()
   }
   let content = ''
-  if (showBombs && isBomb) content = '💣' // game ended
+  if (lost && isBomb) content = '💣' // game ended
   else if (isFlagged) content = '🚩'
   else if (isUncovered) {
     if (isBomb) content = '💣'
@@ -83,10 +83,10 @@ function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lose, s
   )
 }
 
-function Grid ({ grid, updateGrid, lost, setLost }) {
+function Grid ({ grid, updateGrid, lost, won }) {
   const style = {
     gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
-    pointerEvents: lost ? 'none' : ''
+    pointerEvents: lost || won ? 'none' : ''
   }
 
   const colors = ['c0', 'c1']
@@ -117,10 +117,6 @@ function Grid ({ grid, updateGrid, lost, setLost }) {
     updateGrid(grid)
   }
 
-  function lose () {
-    setLost(true)
-  }
-
   function checkWin (grid) {
     const win = grid.flat().filter(sq => !sq.isBomb).every(sq => sq.isUncovered)
     if (win) {
@@ -140,8 +136,7 @@ function Grid ({ grid, updateGrid, lost, setLost }) {
             numAdjBombs={numAdjBombs(i, j)}
             uncover={() => uncoverClick(i, j)}
             setFlagged={value => setFlagged(i, j, value)}
-            lose={() => lose()}
-            showBombs={lost}
+            lost={lost}
           />
         ))
       ))}
@@ -152,11 +147,9 @@ function Grid ({ grid, updateGrid, lost, setLost }) {
 function App () {
   const [difficulty, setDifficulty] = useState(DIFFICULTIES.easy)
   const [grid, updateGrid] = useState([[]])
-  const [lost, setLost] = useState(false)
-
   const [time, setTime] = useState(0)
 
-  useEffect(reset, [difficulty])// executes on mount and when size changes
+  useEffect(reset, [difficulty]) // executes on mount and when size changes
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -164,18 +157,21 @@ function App () {
     }, 1000)
     return () => clearInterval(interval) // clearInterval on unmount
   }, [])
-  // TODO pause time when reset, only start counting after first click
 
   function reset () {
-    if (!grid[0].length || grid.flat().every(x => !x.isUncovered) || window.confirm('Are you sure you want to reset the game?')) {
+    // if the game is over or hasn't started, don't ask for confirmation before resetting
+    if (!grid[0].length || lost || won || grid.flat().every(x => !x.isUncovered) || window.confirm('Are you sure you want to reset the game?')) {
       updateGrid(createGrid(difficulty))
-      setLost(false)
       setTime(0)
     }
   }
 
   // Clear intervals after 6 sec with the timer id
   // setTimeout(() => { clearInterval(timerId); alert('Bye') }, 6000)
+
+  const numFlags = grid.flat().filter(x => x.isFlagged).length
+  const won = grid.flat().filter(x => !x.isBomb).every(x => x.isUncovered)
+  const lost = grid.flat().filter(x => x.isBomb).some(x => x.isUncovered)
 
   return (
     <div id='app'>
@@ -185,13 +181,16 @@ function App () {
           setDifficulty={setDifficulty}
           reset={reset}
           time={time}
+          lost={lost}
+          won={won}
+          numFlags={numFlags}
         />
         <Grid
-        // pass a copy of the grid to avoid unwanted state changes
+          // pass a copy of the grid to avoid unwanted state changes
           grid={JSON.parse(JSON.stringify(grid))}
           updateGrid={updateGrid}
           lost={lost}
-          setLost={setLost}
+          won={won}
         />
       </div>
     </div>
@@ -201,14 +200,17 @@ function App () {
 export default App
 
 /** TODO
+ * guarantee first click not bomb - only add bombs to the grid after the first uncover?
+ * make long-tap cause right click on desktop as well
+ */
+
+/** TODO timer
+ * start timer after first click
+ * stop timer when game done (lost or win)
+ */
+
+/** TODO size
  * on devices in landscape mode, your game should be centered in the browser window, with width of at most 800px
  * on devices in portrait mode, your game should occupy full width of the screen
-* change size of each square
-
- if game is done, dont confirm reset
-// TODO make long-tap cause right click on desktop as well
-// TODO guarantee first click not bomb
-// only add bombs to the grid after the first uncover?
-// TODO show a count of numBombs - numIsFlagged
-// stop timer when game done, turn red?
- */
+ * change size of each square
+  */

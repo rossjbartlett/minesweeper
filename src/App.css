@@ -23,17 +23,26 @@
 
 #header {
   background: saddlebrown;
+  background: radial-gradient(
+    circle,
+    rgba(139, 83, 19, 1) 0%,
+    rgba(139, 69, 19, 1) 100%
+  );
+
   display: flex;
   justify-content: space-between;
   padding: 20px;
   box-shadow: 0 0 5px black;
   position: relative;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 select {
   border-radius: 5px;
   box-shadow: 0 0 2px lightgrey;
   cursor: pointer;
+  font-weight: 600;
 }
 
 #time {
