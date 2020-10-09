@@ -109,20 +109,11 @@ function Grid ({ grid, updateGrid, lost, won }) {
   function uncoverClick (i, j) {
     uncoverRecurse(i, j)
     updateGrid(grid)
-    checkWin(grid)
   }
 
   function setFlagged (i, j, value) {
     grid[i][j].isFlagged = value
     updateGrid(grid)
-  }
-
-  function checkWin (grid) {
-    const win = grid.flat().filter(sq => !sq.isBomb).every(sq => sq.isUncovered)
-    if (win) {
-      console.log('YOU WIN!')
-      // TODO
-    }
   }
 
   return (
