@@ -162,7 +162,7 @@ function App () {
 
   useEffect(() => {
     if (lost || won) clearInterval(timerId)
-  }, [lost, won])
+  }, [lost, won, timerId])
 
   function reset () {
     // if the game is over or hasn't started, don't ask for confirmation before resetting
