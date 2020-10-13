@@ -45,8 +45,8 @@ function Header ({ currentDifficulty, setDifficulty, reset, time, lost, won, num
           <option value={d} key={d}>{DIFFICULTIES[d].name}</option>
         ))}
       </select>
-      <div id='numFlags'><span id='numFlagsIcon'>🚩</span>{currentDifficulty.numBombs - numFlags}</div>
-      <div id='time' style={timeStyle}><span id='timeIcon'>⏱</span>{time}</div>
+      <div><span id='numFlagsIcon'>🚩</span>{currentDifficulty.numBombs - numFlags}</div>
+      <div style={timeStyle}><span id='timeIcon'>⏱</span>{time}</div>
       <div id='resetBtn' onClick={reset}>↺</div>
     </div>
   )
@@ -87,7 +87,7 @@ function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWo
   const style = {
     gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
     pointerEvents: lost || won ? 'none' : '',
-    width: currentDifficulty.width,
+    width: isMobile ? '100vw' : currentDifficulty.width,
     fontSize: currentDifficulty.fontSize[isMobile ? 1 : 0]
   }
   const colors = ['c0', 'c1']
@@ -222,9 +222,4 @@ export default App
 /** TODO
  * guarantee first click not bomb - only add bombs to the grid after the first uncover?
  * make long-tap cause right click on desktop as well
- */
-
-/** TODO size
- * on devices in portrait mode, your game should occupy full width of the screen
- * use vh instead of vw for mobile fontSize
  */

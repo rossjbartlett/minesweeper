@@ -45,9 +45,6 @@ select {
   text-align-last: center;
 }
 
-#time {
-}
-
 #timeIcon {
   margin-right: 5px;
 }
@@ -56,15 +53,6 @@ select {
   display: grid;
   cursor: pointer;
   max-width: 800px;
-}
-
-@media (max-width: 700px) {
-  #grid {
-    width: 100vw !important;
-  }
-  #header {
-    font-size: 7vw;
-  }
 }
 
 .square {
