@@ -34,6 +34,7 @@
   position: relative;
   font-size: 24px;
   font-weight: 600;
+  align-items: center;
 }
 
 select {
@@ -55,6 +56,15 @@ select {
   display: grid;
   cursor: pointer;
   max-width: 800px;
+}
+
+@media (max-width: 700px) {
+  #grid {
+    width: 100vw !important;
+  }
+  #header {
+    font-size: 7vw;
+  }
 }
 
 .square {

@@ -4,9 +4,9 @@ import './App.css'
 const TEXT_COLORS = ['blue', 'green', 'red', 'purple', 'magenta', 'black']
 
 const DIFFICULTIES = {
-  easy: { name: 'Easy', size: [10, 10], numBombs: 10, width: '40vw', fontSize: '2.9vw' },
-  medium: { name: 'Medium', size: [13, 18], numBombs: 40, width: '50vw', fontSize: '2.3vw' },
-  hard: { name: 'Hard', size: [20, 24], numBombs: 99, width: '50vw', fontSize: '1.7vw' }
+  easy: { name: 'Easy', size: [10, 10], numBombs: 10, width: '40vw', fontSize: ['2.9vw', '7vw'] },
+  medium: { name: 'Medium', size: [13, 18], numBombs: 40, width: '50vw', fontSize: ['2.3vw', '4vw'] },
+  hard: { name: 'Hard', size: [20, 24], numBombs: 99, width: '50vw', fontSize: ['1.7vw', '3vw'] }
 }
 
 function getAdjCoords (grid, i, j) {
@@ -83,12 +83,12 @@ function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lost })
   )
 }
 
-function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWon, setLost, currentDifficulty }) {
+function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWon, setLost, currentDifficulty, isMobile }) {
   const style = {
     gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
     pointerEvents: lost || won ? 'none' : '',
     width: currentDifficulty.width,
-    fontSize: currentDifficulty.fontSize
+    fontSize: currentDifficulty.fontSize[isMobile ? 1 : 0]
   }
   const colors = ['c0', 'c1']
 
@@ -150,6 +150,11 @@ function App () {
   const [lost, setLost] = useState(false)
   const [won, setWon] = useState(false)
   const [timerId, setTimerId] = useState()
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth)
+
+  React.useEffect(() => {
+    window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 700))
+  }, [])
 
   useEffect(reset, [difficulty])
 
@@ -205,6 +210,7 @@ function App () {
           setLost={setLost}
           setWon={setWon}
           currentDifficulty={difficulty}
+          isMobile={isMobile}
         />
       </div>
     </div>
@@ -219,7 +225,6 @@ export default App
  */
 
 /** TODO size
- * on devices in landscape mode, your game should be centered in the browser window, with width of at most 800px
  * on devices in portrait mode, your game should occupy full width of the screen
- * change size of each square
-  */
+ * use vh instead of vw for mobile fontSize
+ */
