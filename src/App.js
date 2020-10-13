@@ -199,8 +199,8 @@ function App () {
   const numFlags = grid.flat().filter(x => x.isFlagged).length
 
   return (
-    <div id='app'>
-      <div id='game' className={won ? 'won' : lost ? 'lost' : ''}>
+    <div id='app' className={won ? 'won' : lost ? 'lost' : ''}>
+      <div id='game'>
         <Header
           currentDifficulty={difficulty}
           setDifficulty={setDifficulty}
@@ -223,6 +223,9 @@ function App () {
           currentDifficulty={difficulty}
           isMobile={isMobile}
         />
+      </div>
+      <div id='gameOverMsg' className={won || lost ? 'show' : ''}>
+        {won ? 'You Win!' : lost ? 'You Lose' : ''}
       </div>
     </div>
   )

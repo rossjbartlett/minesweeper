@@ -21,12 +21,12 @@
   box-shadow: 0 0 50px black;
 }
 
-#game.won {
+.won #game {
   box-shadow: 0 0 60px green;
   transition: box-shadow 3s;
 }
 
-#game.lost {
+.lost #game {
   box-shadow: 0 0 60px red;
   transition: box-shadow 3s;
 }
@@ -102,4 +102,29 @@ select {
 
 #resetBtn {
   cursor: pointer;
+}
+
+#gameOverMsg {
+  opacity: 0;
+  border-radius: 10px;
+  padding: 2em 1em;
+  text-shadow: 0 0 3px;
+  position: absolute;
+  background: #222222ac;
+  font-size: x-large;
+  text-shadow: 0 0 10px black;
+  pointer-events: none;
+}
+
+#gameOverMsg.show {
+  opacity: 1;
+  transition: opacity 3s;
+  transition-delay: 1s;
+}
+
+.won #gameOverMsg {
+  color: limegreen;
+}
+.lost #gameOverMsg {
+  color: red;
 }
