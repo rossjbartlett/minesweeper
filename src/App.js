@@ -10,7 +10,7 @@ const DIFFICULTIES = {
 }
 
 function getAdjCoords (grid, i, j) {
-  // get [x,y] coordinates that are adjacent to [i,j] that are valid objs
+  // get [x,y] coordinates that are adjacent to [i,j] that are valid objs (not out of bounds)
   const adj = [
     [i - 1, j - 1], [i - 1, j], [i - 1, j + 1],
     [i, j - 1], [i, j + 1],
@@ -19,19 +19,23 @@ function getAdjCoords (grid, i, j) {
   return adj.filter(coord => grid[coord[0]] && grid[coord[0]][coord[1]])
 }
 
-function createGrid ({ size, numBombs }) {
+function createGrid (size) {
   const grid = new Array(size[0]).fill()
     .map(() => new Array(size[1]).fill({}))
+  return grid
+}
+
+function addBombs (grid, { size, numBombs }, i, j) {
+  // i, j are coords of first click
   let bombs = 0
   while (bombs < numBombs) {
     const randRow = Math.floor(Math.random() * size[0])
     const randCol = Math.floor(Math.random() * size[1])
-    if (!grid[randRow][randCol].isBomb) {
+    if (!grid[randRow][randCol].isBomb && (i !== randRow || j !== randCol)) {
       grid[randRow][randCol] = { isBomb: true }
       bombs++
     }
   }
-  return grid
 }
 
 function Header ({ currentDifficulty, setDifficulty, reset, time, lost, won, numFlags }) {
@@ -108,13 +112,16 @@ function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWo
   }
 
   function uncoverClick (i, j) {
+    if (!gameStarted) {
+      setGameStarted(true)
+      addBombs(grid, currentDifficulty, i, j)
+    }
     if (grid[i][j].isBomb) {
       setLost(true)
       return
     }
     uncoverRecurse(i, j)
     updateGrid(grid)
-    if (!gameStarted) setGameStarted(true)
     if (grid.flat().filter(x => !x.isBomb).every(x => x.isUncovered)) setWon(true)
   }
 
@@ -152,7 +159,7 @@ function App () {
   const [timerId, setTimerId] = useState()
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 700)
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 700))
   }, [])
 
@@ -173,7 +180,7 @@ function App () {
   function reset () {
     // if the game is over or hasn't started, don't ask for confirmation before resetting
     if (!grid[0].length || lost || won || grid.flat().every(x => !x.isUncovered) || window.confirm('Are you sure you want to reset the game?')) {
-      updateGrid(createGrid(difficulty))
+      updateGrid(createGrid(difficulty.size))
       setTime(0)
       clearInterval(timerId)
       setGameStarted(false)
@@ -181,9 +188,6 @@ function App () {
       setWon(false)
     }
   }
-
-  // Clear intervals after 6 sec with the timer id
-  // setTimeout(() => { clearInterval(timerId); alert('Bye') }, 6000)
 
   const numFlags = grid.flat().filter(x => x.isFlagged).length
 
@@ -220,6 +224,5 @@ function App () {
 export default App
 
 /** TODO
- * guarantee first click not bomb - only add bombs to the grid after the first uncover?
  * make long-tap cause right click on desktop as well
  */
