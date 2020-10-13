@@ -14,10 +14,21 @@
   justify-content: center;
   color: white;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 #game {
   box-shadow: 0 0 50px black;
+}
+
+#game.won {
+  box-shadow: 0 0 60px green;
+  transition: box-shadow 3s;
+}
+
+#game.lost {
+  box-shadow: 0 0 60px red;
+  transition: box-shadow 3s;
 }
 
 #header {
@@ -74,7 +85,6 @@ select {
 
 .square {
   text-align: center;
-  user-select: none;
   font-weight: 600;
 }
 .square.c0 {

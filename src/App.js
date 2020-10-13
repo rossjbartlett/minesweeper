@@ -40,7 +40,7 @@ function addBombs (grid, { size, numBombs }, i, j) {
 
 function Header ({ currentDifficulty, setDifficulty, reset, time, lost, won, numFlags }) {
   const onChange = e => setDifficulty(DIFFICULTIES[e.target.value])
-  const timeStyle = { color: lost ? 'red' : won ? 'green' : 'inherit' }
+  const timeStyle = { color: lost ? 'red' : won ? 'limegreen' : 'inherit' }
   return (
     <div id='header'>
       <select id="difficulty" name="difficulty" onChange={onChange}>
@@ -193,7 +193,7 @@ function App () {
 
   return (
     <div id='app'>
-      <div id='game'>
+      <div id='game' className={won ? 'won' : lost ? 'lost' : ''}>
         <Header
           currentDifficulty={difficulty}
           setDifficulty={setDifficulty}
