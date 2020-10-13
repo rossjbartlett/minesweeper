@@ -4,9 +4,9 @@ import './App.css'
 const TEXT_COLORS = ['blue', 'green', 'red', 'purple', 'magenta', 'black']
 
 const DIFFICULTIES = {
-  easy: { name: 'Easy', size: [10, 10], numBombs: 10 },
-  medium: { name: 'Medium', size: [13, 18], numBombs: 40 },
-  hard: { name: 'Hard', size: [20, 24], numBombs: 99 }
+  easy: { name: 'Easy', size: [10, 10], numBombs: 10, width: '40vw', fontSize: '2.9vw' },
+  medium: { name: 'Medium', size: [13, 18], numBombs: 40, width: '50vw', fontSize: '2.3vw' },
+  hard: { name: 'Hard', size: [20, 24], numBombs: 99, width: '50vw', fontSize: '1.7vw' }
 }
 
 function getAdjCoords (grid, i, j) {
@@ -78,17 +78,18 @@ function Square ({ colorClass, numAdjBombs, square, uncover, setFlagged, lost })
       onContextMenu={contextMenu}
       style={style}
     >
-      {content}
+      <div className='content'>{content}</div>
     </div>
   )
 }
 
-function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWon, setLost }) {
+function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWon, setLost, currentDifficulty }) {
   const style = {
     gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
-    pointerEvents: lost || won ? 'none' : ''
+    pointerEvents: lost || won ? 'none' : '',
+    width: currentDifficulty.width,
+    fontSize: currentDifficulty.fontSize
   }
-
   const colors = ['c0', 'c1']
 
   function numAdjBombs (i, j) {
@@ -203,6 +204,7 @@ function App () {
           setGameStarted={setGameStarted}
           setLost={setLost}
           setWon={setWon}
+          currentDifficulty={difficulty}
         />
       </div>
     </div>
