@@ -4,8 +4,8 @@ import './App.css'
 const TEXT_COLORS = ['blue', 'green', 'red', 'purple', 'magenta', 'black']
 
 const DIFFICULTIES = {
-  easy: { name: 'Easy', size: [10, 10], numBombs: 10, width: '35vw', fontSize: ['2.9vw', '7vw'] },
-  medium: { name: 'Medium', size: [13, 18], numBombs: 40, width: '50vw', fontSize: ['2.3vw', '4vw'] },
+  easy: { name: 'Easy', size: [8, 10], numBombs: 10, width: '35vw', fontSize: ['2.9vw', '7vw'] },
+  medium: { name: 'Medium', size: [14, 18], numBombs: 40, width: '50vw', fontSize: ['2.3vw', '4vw'] },
   hard: { name: 'Hard', size: [20, 24], numBombs: 99, width: '50vw', fontSize: ['1.7vw', '3vw'] }
 }
 
