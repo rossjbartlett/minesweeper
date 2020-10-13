@@ -60,6 +60,7 @@ select {
 }
 
 .square:after {
+  /* responsive square sizing */
   content: "";
   display: block;
   padding-bottom: 100%;
