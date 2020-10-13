@@ -76,7 +76,7 @@ select {
   text-align: center;
   user-select: none;
   font-weight: 600;
-  line-height: 1.4em;
+  line-height: 1.2em;
 }
 .square.c0 {
   background-color: var(--dark-green);

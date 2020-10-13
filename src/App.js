@@ -4,7 +4,7 @@ import './App.css'
 const TEXT_COLORS = ['blue', 'green', 'red', 'purple', 'magenta', 'black']
 
 const DIFFICULTIES = {
-  easy: { name: 'Easy', size: [10, 10], numBombs: 10, width: '40vw', fontSize: ['2.9vw', '7vw'] },
+  easy: { name: 'Easy', size: [10, 10], numBombs: 10, width: '35vw', fontSize: ['2.9vw', '7vw'] },
   medium: { name: 'Medium', size: [13, 18], numBombs: 40, width: '50vw', fontSize: ['2.3vw', '4vw'] },
   hard: { name: 'Hard', size: [20, 24], numBombs: 99, width: '50vw', fontSize: ['1.7vw', '3vw'] }
 }
@@ -31,7 +31,6 @@ function createGrid ({ size, numBombs }) {
       bombs++
     }
   }
-  console.log('grid', grid)
   return grid
 }
 
@@ -150,7 +149,7 @@ function App () {
   const [lost, setLost] = useState(false)
   const [won, setWon] = useState(false)
   const [timerId, setTimerId] = useState()
-  const [isMobile, setIsMobile] = React.useState(window.innerWidth)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 700)
 
   React.useEffect(() => {
     window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 700))
