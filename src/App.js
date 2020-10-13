@@ -87,7 +87,8 @@ function Grid ({ grid, updateGrid, lost, won, gameStarted, setGameStarted, setWo
     gridTemplateColumns: `repeat(${grid[0].length}, 1fr)`,
     pointerEvents: lost || won ? 'none' : '',
     width: isMobile ? '100vw' : currentDifficulty.width,
-    fontSize: currentDifficulty.fontSize[isMobile ? 1 : 0]
+    fontSize: currentDifficulty.fontSize[isMobile ? 1 : 0],
+    lineHeight: isMobile ? '1.5em' : '1.2em'
   }
   const colors = ['c0', 'c1']
 
