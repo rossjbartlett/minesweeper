@@ -25,16 +25,23 @@ function createGrid (size) {
   return grid
 }
 
-function addBombs (grid, { size, numBombs }, i, j) {
-  // i, j are coords of first click
+function addBombs (grid, { size, numBombs }, x, y) {
+  // x, y are coordinates of first click
+  const availableCoords = [] // a list of [i,j] coords
+  for (let i = 0; i < size[0]; i++) {
+    for (let j = 0; j < size[1]; j++) {
+      // add coord if it's not the coord of the first click
+      if (i !== x || j !== y) availableCoords.push([i, j])
+    }
+  }
   let bombs = 0
   while (bombs < numBombs) {
-    const randRow = Math.floor(Math.random() * size[0])
-    const randCol = Math.floor(Math.random() * size[1])
-    if (!grid[randRow][randCol].isBomb && (i !== randRow || j !== randCol)) {
-      grid[randRow][randCol] = { isBomb: true }
-      bombs++
-    }
+    // add a bomb at a random coord
+    // remove that coord from the availableCoords to avoid duplicates
+    const randIndex = Math.floor(Math.random() * availableCoords.length)
+    const removedCoord = availableCoords.splice(randIndex, 1)[0]
+    grid[removedCoord[0]][removedCoord[1]] = { isBomb: true }
+    bombs++
   }
 }
 
@@ -222,7 +229,3 @@ function App () {
 }
 
 export default App
-
-/** TODO
- * make long-tap cause right click on desktop as well
- */
