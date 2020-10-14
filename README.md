@@ -1,3 +1,5 @@
 # Minesweeper
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Minesweeper game bootstrapped with <a href="http://example.com/" target="_blank">Create React App</a>.
+
+Click <a href="https://rossjbartlett.github.io/minesweeper/" target="_blank">here</a> to play!
